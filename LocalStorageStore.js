@@ -1,5 +1,4 @@
 import Store from "./Store.js";
-import Models from "../Migrations/index.js";
 
 const store = {
   get(key, receiver = ((n, v) => v)) {
@@ -12,10 +11,9 @@ const store = {
 
 
 class LocalStorageStore extends Store{
-  constructor(){
-    super(store);
+  constructor(models){
+    super(store, models);
   }
-  static Models = Models;
 }
 
 export default LocalStorageStore;

@@ -1,11 +1,13 @@
 
 class Store {
   #store;
-  constructor(store){
+  #models;
+  constructor(store, models){
     this.#store = store;
+    this.#models = models;
   }
   get(key){
-    const model = this.constructor.Models[key];
+    const model = this.#models[key];
     //保存されている内容を取得
     let obj = this.#store.get("store-" + key);
     obj = this.#migrate(key, obj, model.migrations);
