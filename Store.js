@@ -12,9 +12,9 @@ class Store {
     this.#models = models;
   }
 
-  #get(key, serializer){
+  #get(key, deserializer){
     const rawStr = this.#store.get(key);
-    return JSON.parse(rawStr, serializer);
+    return JSON.parse(rawStr, deserializer);
   }
   #set(key, value){
     const str = JSON.stringify(value);
@@ -26,7 +26,7 @@ class Store {
     //保存されている内容を取得、マイグレーション
     const obj = this.#migrate(key, this.#getStore(key));
     this.#setStore(key, obj);
-    return this.#get(Key.Store(key), model.serializer);
+    return this.#get(Key.Store(key), model.deserializer);
   }
   #setStore(key, value){
     this.#set(Key.Store(key), value);
