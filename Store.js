@@ -50,17 +50,23 @@ class Store {
     return this.#models[key];
   }
 
+  #getCurrentMigrationIndex(key){
+    const model = this.#getModel(key);
+    const migrations = model.migrations;
+    const currentVersion = this.#getVersion(key);
+    if(typeof currentVersion !== "number") return -1;
+    const currentMigrationIndex = migrations.findIndex(m=>m.v === currentVersion);
+    if(currentMigrationIndex = -1){
+      throw new Error(`migration missing. current:${version}`);
+    }
+    return currentMigrationIndex;
+  }
+
   #migrate(key, obj) {
     const model = this.#getModel(key);
     const migrations = model.migrations;
-    //現在のバージョンを取得
-    const version = this.#getVersion(key);
     //実施する必要のあるmigrationを取得
-    let current = -1;
-    if (typeof version === "number") {
-      current = migrations.findIndex(m => m.v === version);
-      if (current === -1) throw new Error(`migration missing. current:${version}`);
-    }
+    const current = this.#getCurrentMigrationIndex(key);
     const migrationList = migrations.slice(current + 1);
   
   
