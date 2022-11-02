@@ -22,10 +22,6 @@ class Store {
   }
 
   #getStore(key){
-    //マイグレーションが必要なら実施
-    if(this.#requireMigration(key)){
-      this.#migrate(key);
-    }
     const migration = this.#getCurrentMigration(key);
     return this.#get(Key.Store(key), migration.deserializer);
   }
@@ -42,6 +38,10 @@ class Store {
   }
   
   get(key){
+    //マイグレーションが必要なら実施
+    if(this.#requireMigration(key)){
+      this.#migrate(key);
+    }
     return this.#getStore(key);
   }
   set(key, value){
