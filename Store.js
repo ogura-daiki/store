@@ -24,7 +24,7 @@ class Store {
   #getStore(key){
     const model = this.#models[key];
     //保存されている内容を取得、マイグレーション
-    const obj = this.#migrate(key, this.#getStore(key), model.migrations);
+    const obj = this.#migrate(key, this.#getStore(key));
     this.#setStore(key, obj);
     return this.#get(Key.Store(key), model.serializer);
   }
@@ -46,7 +46,9 @@ class Store {
     this.#setStore(key, value);
   }
 
-  #migrate(key, obj, migrations) {
+  #migrate(key, obj) {
+    const model = this.#models[key];
+    const migrations = model.migrations;
     //現在のバージョンを取得
     const version = this.#getVersion(key);
     //実施する必要のあるmigrationを取得
