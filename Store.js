@@ -69,7 +69,6 @@ class Store {
     const current = this.#getCurrentMigrationIndex(key);
     const migrationList = migrations.slice(current + 1);
   
-  
     //実施すべきmigrationが無い場合は最新の状態になっているのでそのまま返す。
     if (migrationList.length === 0) return obj;
   
@@ -79,7 +78,7 @@ class Store {
     //一番最後のmigrationのバージョンを保存
     const lastMigration = migrationList.pop();
     this.#setVersion(key, lastMigration.v);
-    this.set(key, migrated);
+    this.#setStore(key, migrated);
   
     return migrated;
   }
