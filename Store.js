@@ -22,15 +22,15 @@ class Store {
   }
 
   #getStore(key){
-    const model = this.#getModel(key);
     //保存されている内容を取得、マイグレーション
     const obj = this.#migrate(key, this.#getStore(key));
     this.#setStore(key, obj);
-    return this.#get(Key.Store(key), model.deserializer);
+    const migration = this.#getCurrentMigration(key);
+    return this.#get(Key.Store(key), migration.deserializer);
   }
   #setStore(key, value){
-    const model = this.#getModel(key);
-    this.#set(Key.Store(key), value, model.serializer);
+    const migration = this.#getCurrentMigration(key);
+    this.#set(Key.Store(key), value, migration.serializer);
   }
 
   #getVersion(key){
