@@ -24,8 +24,7 @@ class Store {
   #getStore(key){
     const migration = this.#getCurrentMigration(key);
     //保存されている内容を取得、マイグレーション
-    const obj = this.#migrate(key, this.#get(Key.Store(key), migration.deserializer));
-    this.#setStore(key, obj);
+    this.#migrate(key, this.#get(Key.Store(key), migration.deserializer));
     return this.#get(Key.Store(key), migration.deserializer);
   }
   #setStore(key, value){
