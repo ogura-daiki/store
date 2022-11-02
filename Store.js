@@ -22,9 +22,9 @@ class Store {
   }
 
   #getStore(key){
+    //マイグレーション実行
+    this.#migrate(key);
     const migration = this.#getCurrentMigration(key);
-    //保存されている内容を取得、マイグレーション
-    this.#migrate(key, this.#get(Key.Store(key), migration.deserializer));
     return this.#get(Key.Store(key), migration.deserializer);
   }
   #setStore(key, value){
@@ -79,29 +79,26 @@ class Store {
     return migrations.length > current+1;
   }
 
-  #migrate(key, obj) {
+  #migrate(key) {
     const model = this.#getModel(key);
     const migrations = model.migrations;
     //マイグレーションが不要ならオブジェクトをそのまま返す
     if(!this.#requireMigration(key)){
-      return obj;
+      return;
     }
     //実施する必要のあるmigrationを取得
     const current = this.#getCurrentMigrationIndex(key);
     const migrationList = migrations.slice(current + 1);
-  
-    //実施すべきmigrationが無い場合は最新の状態になっているのでそのまま返す。
-    if (migrationList.length === 0) return obj;
+
+    const currentStoreValue = this.#getStore(key);
   
     //migrationを実施
-    const migrated = migrationList.reduce((obj, m) => m.up(obj), obj);
-  
+    const migrated = migrationList.reduce((storeValue, m) => m.up(storeValue), currentStoreValue);
+    this.#setStore(key, migrated);
+    
     //一番最後のmigrationのバージョンを保存
     const lastMigration = migrationList.pop();
     this.#setVersion(key, lastMigration.v);
-    this.#setStore(key, migrated);
-  
-    return migrated;
   }
 }
 
