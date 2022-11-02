@@ -22,10 +22,10 @@ class Store {
   }
 
   #getStore(key){
-    //保存されている内容を取得、マイグレーション
-    const obj = this.#migrate(key, this.#getStore(key));
-    this.#setStore(key, obj);
     const migration = this.#getCurrentMigration(key);
+    //保存されている内容を取得、マイグレーション
+    const obj = this.#migrate(key, this.#get(Key.Store(key), migration.deserializer));
+    this.#setStore(key, obj);
     return this.#get(Key.Store(key), migration.deserializer);
   }
   #setStore(key, value){
@@ -69,9 +69,24 @@ class Store {
     return model.migrations[currentIndex];
   }
 
+  #requireMigration(key){
+    //現在のMigration位置を取得
+    const current = this.#getCurrentMigrationIndex(key);
+    //未MigrationならMigrationが必要
+    if(current === -1) return true;
+    const model = this.#getModel(key);
+    const migrations = model.migrations;
+    //現在のMigration位置より後ろにMigrationがあるか
+    return migrations.length > current+1;
+  }
+
   #migrate(key, obj) {
     const model = this.#getModel(key);
     const migrations = model.migrations;
+    //マイグレーションが不要ならオブジェクトをそのまま返す
+    if(!this.#requireMigration(key)){
+      return obj;
+    }
     //実施する必要のあるmigrationを取得
     const current = this.#getCurrentMigrationIndex(key);
     const migrationList = migrations.slice(current + 1);
