@@ -22,7 +22,7 @@ class Store {
   }
 
   #getStore(key){
-    const model = this.#models[key];
+    const model = this.#getModel(key);
     //保存されている内容を取得、マイグレーション
     const obj = this.#migrate(key, this.#getStore(key));
     this.#setStore(key, obj);
@@ -46,8 +46,12 @@ class Store {
     this.#setStore(key, value);
   }
 
+  #getModel(key){
+    return this.#models[key];
+  }
+
   #migrate(key, obj) {
-    const model = this.#models[key];
+    const model = this.#getModel(key);
     const migrations = model.migrations;
     //現在のバージョンを取得
     const version = this.#getVersion(key);
