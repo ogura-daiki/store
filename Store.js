@@ -21,8 +21,12 @@ class Store {
     this.#store.set(key, str);
   }
 
-  #getStore(key, serializer){
-    return this.#get(Key.Store(key), serializer);
+  #getStore(key){
+    const model = this.#models[key];
+    //保存されている内容を取得、マイグレーション
+    const obj = this.#migrate(key, this.#getStore(key), model.migrations);
+    this.#setStore(key, obj);
+    return this.#get(Key.Store(key), model.serializer);
   }
   #setStore(key, value){
     this.#set(Key.Store(key), value);
@@ -36,11 +40,7 @@ class Store {
   }
   
   get(key){
-    const model = this.#models[key];
-    //保存されている内容を取得、マイグレーション
-    const obj = this.#migrate(key, this.#getStore(key), model.migrations);
-    this.#setStore(key, obj);
-    return this.#getStore(key, model.serializer);
+    return this.#getStore(key);
   }
   set(key, value){
     this.#setStore(key, value);
