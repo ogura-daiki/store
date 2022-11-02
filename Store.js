@@ -12,17 +12,17 @@ class Store {
     this.#models = models;
   }
 
-  #get(key, receiver){
+  #get(key, serializer){
     const rawStr = this.#store.get(key);
-    return JSON.parse(rawStr, receiver);
+    return JSON.parse(rawStr, serializer);
   }
   #set(key, value){
     const str = JSON.stringify(value);
     this.#store.set(key, str);
   }
 
-  #getStore(key, receiver){
-    return this.#get(Key.Store(key), receiver);
+  #getStore(key, serializer){
+    return this.#get(Key.Store(key), serializer);
   }
   #setStore(key, value){
     this.#set(Key.Store(key), value);
@@ -40,7 +40,7 @@ class Store {
     //保存されている内容を取得、マイグレーション
     const obj = this.#migrate(key, this.#getStore(key), model.migrations);
     this.#setStore(key, obj);
-    return this.#getStore(key, model.receiver);
+    return this.#getStore(key, model.serializer);
   }
   set(key, value){
     this.#store.set(Key.Store(key), value);
