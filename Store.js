@@ -1,4 +1,9 @@
 
+const Key = Object.assign(Object.create(null), {
+  Store:key=>`store-${key}`,
+  Version:key=>`version-${key}`,
+});
+
 class Store {
   #store;
   #models;
@@ -6,21 +11,43 @@ class Store {
     this.#store = store;
     this.#models = models;
   }
+
+  #get(key, receiver){
+    const rawStr = this.#store.get(key);
+    return JSON.parse(rawStr, receiver);
+  }
+  #set(key, value){
+    this.#store.set(key, value);
+  }
+
+  #getStore(key, receiver){
+    return this.#get(Key.Store(key), receiver);
+  }
+  #setStore(key, value){
+    this.#set(Key.Store(key), value);
+  }
+
+  #getVersion(key){
+    return this.#get(Key.Version(key));
+  }
+  #setVersion(key, value){
+    this.#set(Key.Version(key), value);
+  }
+  
   get(key){
     const model = this.#models[key];
-    //保存されている内容を取得
-    let obj = this.#store.get("store-" + key);
-    obj = this.#migrate(key, obj, model.migrations);
-    this.#store.set("store-" + key, obj);
-    return this.#store.get("store-" + key, model.receiver);
+    //保存されている内容を取得、マイグレーション
+    const obj = this.#migrate(key, this.#getStore(key), model.migrations);
+    this.#setStore(key, obj);
+    return this.#getStore(key, model.receiver);
   }
   set(key, value){
-    this.#store.set(key, value);
+    this.#store.set(Key.Store(key), value);
   }
 
   #migrate(key, obj, migrations) {
     //現在のバージョンを取得
-    const version = this.#store.get("version-" + key);
+    const version = this.#getVersion(key);
     //実施する必要のあるmigrationを取得
     let current = -1;
     if (typeof version === "number") {
@@ -38,7 +65,7 @@ class Store {
   
     //一番最後のmigrationのバージョンを保存
     const lastMigration = migrationList.pop();
-    this.#store.set("version-" + key, lastMigration.v);
+    this.#setVersion(key, lastMigration.v);
     this.set(key, migrated);
   
     return migrated;
