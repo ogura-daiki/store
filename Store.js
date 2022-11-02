@@ -43,7 +43,7 @@ class Store {
     return this.#getStore(key, model.serializer);
   }
   set(key, value){
-    this.#store.set(Key.Store(key), value);
+    this.#setStore(key, value);
   }
 
   #migrate(key, obj, migrations) {
