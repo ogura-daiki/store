@@ -22,8 +22,10 @@ class Store {
   }
 
   #getStore(key){
-    //マイグレーション実行
-    this.#migrate(key);
+    //マイグレーションが必要なら実施
+    if(this.#requireMigration(key)){
+      this.#migrate(key);
+    }
     const migration = this.#getCurrentMigration(key);
     return this.#get(Key.Store(key), migration.deserializer);
   }
@@ -82,10 +84,7 @@ class Store {
   #migrate(key) {
     const model = this.#getModel(key);
     const migrations = model.migrations;
-    //マイグレーションが不要ならオブジェクトをそのまま返す
-    if(!this.#requireMigration(key)){
-      return;
-    }
+
     //実施する必要のあるmigrationを取得
     const current = this.#getCurrentMigrationIndex(key);
     const migrationList = migrations.slice(current + 1);
