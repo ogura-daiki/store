@@ -63,6 +63,12 @@ class Store {
     return currentMigrationIndex;
   }
 
+  #getCurrentMigration(key){
+    const model = this.#getModel(key);
+    const currentIndex = this.#getCurrentMigrationIndex(key);
+    return model.migrations[currentIndex];
+  }
+
   #migrate(key, obj) {
     const model = this.#getModel(key);
     const migrations = model.migrations;
