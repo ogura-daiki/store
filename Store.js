@@ -16,8 +16,8 @@ class Store {
     const rawStr = this.#store.get(key);
     return JSON.parse(rawStr, deserializer);
   }
-  #set(key, value){
-    const str = JSON.stringify(value);
+  #set(key, value, serializer){
+    const str = JSON.stringify(value, serializer);
     this.#store.set(key, str);
   }
 
@@ -29,7 +29,8 @@ class Store {
     return this.#get(Key.Store(key), model.deserializer);
   }
   #setStore(key, value){
-    this.#set(Key.Store(key), value);
+    const model = this.#getModel(key);
+    this.#set(Key.Store(key), value, model.serializer);
   }
 
   #getVersion(key){
