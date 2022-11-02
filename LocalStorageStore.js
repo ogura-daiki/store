@@ -1,11 +1,11 @@
 import Store from "./Store.js";
 
 const store = {
-  get(key, receiver = ((n, v) => v)) {
-    return JSON.parse(localStorage.getItem(key) || "{}", receiver);
+  get(key) {
+    return localStorage.getItem(key);
   },
   set(key, value) {
-    return localStorage.setItem(key, JSON.stringify(value));
+    return localStorage.setItem(key, value);
   },
 };
 

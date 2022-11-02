@@ -17,7 +17,8 @@ class Store {
     return JSON.parse(rawStr, receiver);
   }
   #set(key, value){
-    this.#store.set(key, value);
+    const str = JSON.stringify(value);
+    this.#store.set(key, str);
   }
 
   #getStore(key, receiver){
