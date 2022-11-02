@@ -23,11 +23,11 @@ class Store {
 
   #getStore(key){
     const migration = this.#getCurrentMigration(key);
-    return this.#get(Key.Store(key), migration.deserializer);
+    return this.#get(Key.Store(key), migration?.deserializer);
   }
   #setStore(key, value){
     const migration = this.#getCurrentMigration(key);
-    this.#set(Key.Store(key), value, migration.serializer);
+    this.#set(Key.Store(key), value, migration?.serializer);
   }
 
   #getVersion(key){
