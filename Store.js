@@ -58,7 +58,7 @@ class Store {
     const currentVersion = this.#getVersion(key);
     if(typeof currentVersion !== "number") return -1;
     const currentMigrationIndex = migrations.findIndex(m=>m.v === currentVersion);
-    if(currentMigrationIndex = -1){
+    if(currentMigrationIndex === -1){
       throw new Error(`migration missing. current:${version}`);
     }
     return currentMigrationIndex;
